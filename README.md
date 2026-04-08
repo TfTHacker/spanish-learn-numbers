@@ -2,9 +2,7 @@
 
 An Obsidian plugin for practicing Spanish numbers with spaced repetition, cram sessions, audio, and listening drills.
 
-
-![Demo screenshot](./demo.gif)
-
+<img src="demo.gif" width="500" />
 
 ## Features
 
