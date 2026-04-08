@@ -1,0 +1,31 @@
+{
+  "name": "learn-spanish-numbers-obsidian",
+  "version": "0.0.0",
+  "description": "Learn Spanish numbers from 1 to 1 trillion with SRS flashcard practice, spaced repetition, and audio support.",
+  "main": "build/main.js",
+  "type": "module",
+  "author": "TfTHacker",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TfTHacker/learn-spanish-numbers-obsidian.git"
+  },
+  "homepage": "https://github.com/TfTHacker/learn-spanish-numbers-obsidian#readme",
+  "bugs": {
+    "url": "https://github.com/TfTHacker/learn-spanish-numbers-obsidian/issues"
+  },
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "check": "node scripts/validate-numbers.mjs && node scripts/validate-learning-flows.mjs && tsc -noEmit -skipLibCheck",
+    "build": "npm run check && node esbuild.config.mjs production",
+    "version": "node version-bump.mjs && git add manifest.json versions.json",
+    "lint": "npm run check"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.28.0",
+    "obsidian": "^1.12.3",
+    "tslib": "^2.8.1",
+    "typescript": "^5.0.0"
+  }
+}

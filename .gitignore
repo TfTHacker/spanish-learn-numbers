@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build output
+build/
+
+# Local build script (contains vault path)
+local_build.sh
+
+# IDE
+.idea/
+.vscode/
+
+# Local tooling
+.codex
+.pi/
+agent.md
+
+# OS
+.DS_Store

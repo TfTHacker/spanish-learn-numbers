@@ -1,0 +1,1004 @@
+
+/* Learn Spanish Numbers - Plugin Styles */
+
+/* ===========================
+   Common / Layout
+   =========================== */
+
+.lsn-wrap {
+  width: 100%;
+  max-width: 700px;
+  min-width: 280px;
+  margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.lsn-card {
+  background: var(--background-secondary);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.lsn-card-sm {
+  background: var(--background-secondary);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.lsn-title {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.lsn-title-lg {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.lsn-subtitle {
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.lsn-text-muted {
+  color: var(--text-muted);
+}
+
+.lsn-text-muted-sm {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.lsn-text-muted-xs {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.lsn-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.lsn-example {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.lsn-home-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 8px;
+}
+
+.lsn-home-btn-text {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 16px;
+  cursor: pointer;
+  margin-top: 12px;
+  font-size: 18px;
+}
+
+/* ===========================
+   Buttons
+   =========================== */
+
+.lsn-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.lsn-btn-primary {
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.lsn-btn-secondary {
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.lsn-btn-purple {
+  background: #9b59b6;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.lsn-btn-dark {
+  background: #34495e;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.lsn-btn-warning {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.lsn-btn-hard {
+  background: #f39c12;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.lsn-input-error {
+  border-color: #e74c3c !important;
+}
+
+.lsn-btn-skip {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 16px;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+/* ===========================
+   Audio Toggle Button
+   =========================== */
+
+.lsn-btn-toggle {
+  background: var(--background-secondary);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.lsn-audio-on {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: 1px solid var(--interactive-accent);
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.lsn-audio-off {
+  background: var(--background-modifier-form-field);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+/* ===========================
+   Button States (Selected/Active)
+   =========================== */
+
+.lsn-btn-order {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  background: var(--background-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.lsn-btn-order-active {
+  border-color: var(--interactive-accent);
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  font-weight: bold;
+}
+
+.lsn-direction-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  background: var(--background-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: var(--text);
+}
+
+.lsn-direction-btn-active {
+  border-color: var(--interactive-accent);
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  font-weight: bold;
+}
+
+.lsn-btn-icon {
+  background: var(--background-secondary);
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.lsn-btn-icon-lg {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  margin-top: 12px;
+}
+
+.lsn-btn-start {
+  background: #9b59b6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 18px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 24px;
+}
+
+.lsn-btn-reveal {
+  background: var(--background-secondary);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 32px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.lsn-btn-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.lsn-btn-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.lsn-icon-only {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lsn-icon-only svg,
+.lsn-home-btn svg,
+.lsn-home-btn-text svg,
+.lsn-btn-icon svg,
+.lsn-btn-icon-lg svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.lsn-btn-icon-lg svg {
+  width: 22px;
+  height: 22px;
+}
+
+.lsn-btn-with-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.lsn-btn-with-icon svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.lsn-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.lsn-preset-btn {
+  background: var(--background-primary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 4px;
+  min-height: 84px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.lsn-preset-btn-label {
+  font-weight: 600;
+  display: block;
+  width: 100%;
+}
+
+.lsn-preset-btn-desc {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.35;
+  display: block;
+  width: 100%;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.lsn-preset-grid-compact {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.lsn-preset-btn-compact {
+  min-height: 0;
+  padding: 10px 12px;
+  gap: 0;
+  align-items: center;
+  text-align: center;
+}
+
+.lsn-preset-range {
+  display: block;
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .lsn-preset-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lsn-preset-grid-compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ===========================
+   Form Inputs
+   =========================== */
+
+.lsn-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+  background: var(--background-primary);
+  color: var(--text);
+  box-sizing: border-box;
+}
+
+select.lsn-input {
+  min-height: 44px;
+  line-height: 1.4;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.lsn-input-lg {
+  width: 100%;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 24px;
+  background: var(--background-primary);
+  color: var(--text);
+  box-sizing: border-box;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+
+input.lsn-input-lg {
+  background: var(--background-primary) !important;
+  color: var(--text) !important;
+  -webkit-text-fill-color: var(--text);
+  appearance: none;
+}
+
+.lsn-textarea {
+  width: 100%;
+  height: 80px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+  background: var(--background-primary);
+  color: var(--text);
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+/* ===========================
+   Cards / Question Boxes
+   =========================== */
+
+.lsn-question-box {
+  background: var(--background-secondary);
+  border-radius: 16px;
+  padding: 48px;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.lsn-question-box-sm {
+  background: var(--background-secondary);
+  border-radius: 16px;
+  padding: 48px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.lsn-cram-question-box,
+.lsn-cram-answer-box {
+  min-height: 196px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.lsn-cram-answer-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lsn-cram-answer-box {
+  margin-bottom: 0;
+}
+
+.lsn-cram-answer-pending .lsn-answer-text,
+.lsn-cram-answer-pending .lsn-btn-icon-lg {
+  visibility: hidden;
+}
+
+.lsn-cram-controls {
+  position: relative;
+  min-height: 56px;
+}
+
+.lsn-cram-primary-action,
+.lsn-cram-review-actions {
+  position: absolute;
+  inset: 0;
+}
+
+.lsn-cram-primary-action {
+  width: 100%;
+}
+
+.lsn-cram-review-actions {
+  margin-bottom: 0;
+}
+
+.lsn-cram-audio-hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.lsn-practice-question-box,
+.lsn-practice-answer-box {
+  min-height: 212px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.lsn-practice-answer-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lsn-practice-answer-box {
+  margin-bottom: 0;
+}
+
+.lsn-practice-answer-pending .lsn-answer-text,
+.lsn-practice-answer-pending .lsn-btn-icon-lg {
+  visibility: hidden;
+}
+
+.lsn-practice-controls {
+  position: relative;
+  min-height: 56px;
+}
+
+.lsn-practice-primary-action,
+.lsn-practice-review-actions {
+  position: absolute;
+  inset: 0;
+}
+
+.lsn-practice-primary-action {
+  width: 100%;
+}
+
+.lsn-practice-review-actions {
+  margin-bottom: 0;
+}
+
+.lsn-question-text {
+  font-size: 48px;
+  font-weight: bold;
+  word-break: break-all;
+}
+
+.lsn-answer-box {
+  background: var(--background-secondary);
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.lsn-answer-text {
+  font-size: 32px;
+  font-weight: bold;
+  color: #27ae60;
+  word-break: break-word;
+}
+
+.lsn-direction {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* ===========================
+   Stats / Progress
+   =========================== */
+
+.lsn-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.lsn-stat-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.lsn-stat-item {
+  background: var(--background-secondary);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.lsn-stat-value {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.lsn-stat-value-green {
+  color: #27ae60;
+}
+
+.lsn-stat-value-orange {
+  color: #f39c12;
+}
+
+.lsn-stat-value-purple {
+  color: #9b59b6;
+}
+
+.lsn-stat-value-blue {
+  color: #3498db;
+}
+
+.lsn-progress-bar {
+  background: var(--background-primary);
+  border-radius: 8px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.lsn-progress-fill {
+  background: #3498db;
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.3s;
+}
+
+.lsn-progress-fill-purple {
+  background: #9b59b6;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.lsn-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.lsn-progress-section {
+  margin-bottom: 16px;
+}
+
+.lsn-progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.lsn-card-count {
+  text-align: right;
+}
+
+/* ===========================
+   Listen & Learn / Slideshow
+   =========================== */
+
+.lsn-slideshow-card {
+  background: var(--background-secondary);
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.lsn-slideshow-num {
+  font-size: 48px;
+  font-weight: bold;
+  color: var(--text);
+  margin-bottom: 12px;
+  word-break: break-all;
+}
+
+.lsn-slideshow-first {
+  font-size: 36px;
+  font-weight: bold;
+  color: #27ae60;
+  word-break: break-word;
+}
+
+.lsn-slideshow-second {
+  font-size: 36px;
+  font-weight: bold;
+  color: #e74c3c;
+  margin-top: 8px;
+  word-break: break-word;
+}
+
+.lsn-slideshow-waiting {
+  font-size: 24px;
+  color: var(--text-muted);
+}
+
+.lsn-player-controls {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.lsn-footer-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.lsn-footer-actions-left {
+  display: flex;
+  gap: 16px;
+}
+
+/* ===========================
+   Number to Spanish
+   =========================== */
+
+.lsn-number-to-spanish-result {
+  background: var(--background-secondary);
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+  word-wrap: break-word;
+  min-height: 152px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.lsn-number-to-spanish-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.lsn-number-to-spanish-result-pending .lsn-number-to-spanish-text {
+  visibility: hidden;
+}
+
+.lsn-number-to-spanish-controls {
+  min-height: 56px;
+  display: flex;
+  justify-content: center;
+}
+
+.lsn-number-to-spanish-speak {
+  min-width: 88px;
+}
+
+.lsn-number-to-spanish-speak:disabled {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.lsn-number-to-spanish-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: #27ae60;
+  margin-bottom: 0;
+  width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.lsn-number-breakdown {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.lsn-number-breakdown-pending {
+  display: none;
+}
+
+.lsn-number-breakdown-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.lsn-number-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lsn-number-breakdown-item {
+  background: var(--background-primary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.lsn-number-breakdown-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.lsn-number-breakdown-label {
+  font-weight: 600;
+}
+
+.lsn-number-breakdown-value {
+  color: var(--text-muted);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.lsn-number-breakdown-text {
+  color: var(--text);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* ===========================
+   Summary / Session History
+   =========================== */
+
+.lsn-session-item {
+  background: var(--background-secondary);
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.lsn-session-date {
+  font-weight: bold;
+}
+
+.lsn-session-mode {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ===========================
+   Settings
+   =========================== */
+
+.lsn-settings-section {
+  background: var(--background-secondary);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.lsn-settings-title {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.lsn-settings-desc {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 0 0 12px 0;
+}
+
+.lsn-settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 12px 0;
+}
+
+.lsn-settings-reset-btn {
+  white-space: nowrap;
+}
+
+/* ===========================
+   Direction Buttons (ES-EN / EN-ES)
+   =========================== */
+
+.lsn-direction-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lsn-direction-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 2px solid var(--border);
+  background: var(--background-primary);
+  cursor: pointer;
+}
+
+.lsn-direction-btn-active {
+  border-color: var(--accent-color);
+  background: var(--background-modifier-hover);
+  font-weight: bold;
+}
+
+/* ===========================
+   Celebration
+   =========================== */
+
+.lsn-celebration {
+  font-size: 64px;
+  margin-bottom: 24px;
+}
+
+/* ===========================
+   Utility
+   =========================== */
+
+.lsn-hidden {
+  display: none;
+}
+
+.lsn-text-center {
+  text-align: center;
+}
+
+.lsn-mb-16 {
+  margin-bottom: 16px;
+}
+
+.lsn-mb-24 {
+  margin-bottom: 24px;
+}
+
+.lsn-mt-16 {
+  margin-top: 16px;
+}
+
+.lsn-mt-24 {
+  margin-top: 24px;
+}
+
+.lsn-flex-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.lsn-word-break {
+  word-break: break-all;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+code.lsn-code {
+  background: var(--background-modifier-border);
+  padding: 1px 4px;
+  border-radius: 3px;
+}

@@ -1,0 +1,11 @@
+{
+	"id": "spanish-learn-numbers",
+	"name": "Learn Spanish Numbers",
+	"version": "0.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Learn Spanish numbers with SRS flashcard practice, spaced repetition, and audio support.",
+	"author": "TfTHacker",
+	"authorUrl": "https://tfthacker.com",
+	"fundingUrl": "https://x.com/TfTHacker",
+	"isDesktopOnly": false
+}
