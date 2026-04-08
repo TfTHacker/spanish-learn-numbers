@@ -2,6 +2,10 @@
 
 An Obsidian plugin for practicing Spanish numbers with spaced repetition, cram sessions, audio, and listening drills.
 
+
+![Demo screenshot](./demo.gif)
+
+
 ## Features
 
 ### SRS Practice
