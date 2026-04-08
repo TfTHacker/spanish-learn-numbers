@@ -19,3 +19,12 @@ It builds the plugin and copies the result into the local Obsidian vault plugin 
 
 - The repository includes validator scripts for both Spanish number generation and learning-flow regressions.
 - When developing this plugin locally, use `./local_build.sh` after builds so the test vault stays in sync.
+
+## Updating the version
+
+1. Update `package.json` version number.
+2. Run `npm run version` to update `manifest.json` and `versions.json`.
+3. Commit the repo.
+4. Run `npm run githubaction` to commit the version tag and push it so the GitHub Action can prepare the release.
+
+Note: `npm run githubaction` is not currently defined in this repo's `package.json`, so add that script or use the equivalent manual git/tag/push flow.

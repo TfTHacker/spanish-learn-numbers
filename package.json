@@ -8,11 +8,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TfTHacker/learn-spanish-numbers-obsidian.git"
+    "url": "git+https://github.com/TfTHacker/spanish-learn-numbers.git"
   },
-  "homepage": "https://github.com/TfTHacker/learn-spanish-numbers-obsidian#readme",
+  "homepage": "https://github.com/TfTHacker/spanish-learn-numbers#readme",
   "bugs": {
-    "url": "https://github.com/TfTHacker/learn-spanish-numbers-obsidian/issues"
+    "url": "https://github.com/TfTHacker/spanish-learn-numbers/issues"
   },
   "scripts": {
     "dev": "node esbuild.config.mjs",
