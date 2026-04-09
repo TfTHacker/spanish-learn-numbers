@@ -5,12 +5,25 @@
    Common / Layout
    =========================== */
 
+.lsn-view {
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lsn-view > * {
+  min-height: 100%;
+}
+
 .lsn-wrap {
   width: 100%;
   max-width: 700px;
   min-width: 280px;
   margin: 0 auto;
   padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
 
@@ -628,6 +641,67 @@ input.lsn-input-lg {
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   margin-bottom: 12px;
+}
+
+.lsn-dashboard-actions > * {
+  min-width: 0;
+}
+
+.lsn-dashboard-btn {
+  width: 100%;
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.lsn-dashboard-btn .lsn-btn-with-icon {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+}
+
+.lsn-dashboard-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.lsn-dashboard-exit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
+}
+
+.lsn-dashboard-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+}
+
+.lsn-dashboard-icon-btn:hover,
+.lsn-dashboard-icon-btn:focus-visible,
+.lsn-dashboard-exit-btn:hover,
+.lsn-dashboard-exit-btn:focus-visible {
+  background: transparent;
+  border: none;
+  color: var(--text);
+}
+
+.lsn-audio-icon-off {
+  color: #c56a6a;
 }
 
 .lsn-stat-item {

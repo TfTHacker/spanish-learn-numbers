@@ -17,6 +17,7 @@ export class LearnSpanishNumbersView extends View {
     super(leaf);
     this.plugin = plugin;
     this.container = this.containerEl;
+    this.container.addClass('lsn-view');
   }
 
   getViewType(): string {
@@ -28,6 +29,7 @@ export class LearnSpanishNumbersView extends View {
   }
 
   async onClose() {
+    this.container.removeClass('lsn-view');
     this.plugin.stopAudio();
     if (this.plugin.listenLearnCleanup) {
       this.plugin.listenLearnCleanup();
@@ -46,7 +48,7 @@ export class LearnSpanishNumbersView extends View {
 
     switch (this.plugin.currentPanel) {
       case 'dashboard':
-        new DashboardPanel(this.plugin, wrap).render();
+        new DashboardPanel(this.plugin, wrap, this).render();
         break;
       case 'practice':
         new PracticePanel(this.plugin, wrap, this).render();

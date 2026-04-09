@@ -28,11 +28,25 @@ export const APP_ICONS = {
       <path d="M15.5 9.5a4 4 0 0 1 0 5M17.75 7a7.5 7.5 0 0 1 0 10"/>
     </svg>
   `,
+  audioOff: `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 14h3.5L12 18V6L7.5 10H4z"/>
+      <path d="M15.25 9.25 19.75 13.75"/>
+      <path d="M19.75 9.25 15.25 13.75"/>
+    </svg>
+  `,
   home: `
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M4.75 10.5 12 4.75l7.25 5.75"/>
       <path d="M6.5 9.75v9.5h11v-9.5"/>
       <path d="M10 19.25v-5.5h4v5.5"/>
+    </svg>
+  `,
+  exit: `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M13 4.75h4.25A1.75 1.75 0 0 1 19 6.5v11a1.75 1.75 0 0 1-1.75 1.75H13"/>
+      <path d="M11 8.25 6 12l5 3.75"/>
+      <path d="M6 12h10"/>
     </svg>
   `,
   back: `
