@@ -41,6 +41,7 @@ export default class LearnSpanishNumbersPlugin extends Plugin {
       direction: savedSettings?.direction ?? 'es-en',
       speed: savedSettings?.speed ?? 3,
       shuffled: savedSettings?.shuffled ?? false,
+      autoRepeatRange: savedSettings?.autoRepeatRange ?? false,
     };
 
     // Register view
@@ -180,6 +181,7 @@ export default class LearnSpanishNumbersPlugin extends Plugin {
       direction: defaultSettings.listenLearnSettings.direction,
       speed: defaultSettings.listenLearnSettings.speed,
       shuffled: defaultSettings.listenLearnSettings.shuffled,
+      autoRepeatRange: defaultSettings.listenLearnSettings.autoRepeatRange,
     };
 
     this.stopAudio();

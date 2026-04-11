@@ -91,6 +91,17 @@ export const APP_ICONS = {
       <path d="M10 13.75 6.5 16.5 10 19.25"/>
     </svg>
   `,
+  repeatRange: `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M6.5 7.5h11"/>
+      <path d="M14.75 4.75 18.25 7.5 14.75 10.25"/>
+      <path d="M17.5 16.5h-11"/>
+      <path d="M9.25 13.75 5.75 16.5 9.25 19.25"/>
+      <path d="M7.5 11.25v2.25"/>
+      <path d="M16.5 10.5v2.25"/>
+      <path d="M10 12h4"/>
+    </svg>
+  `,
   sequential: `
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M7 7.5h10M7 12h10M7 16.5h10"/>

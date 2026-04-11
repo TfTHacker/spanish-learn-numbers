@@ -214,6 +214,7 @@ export class ListenLearnPanel {
         direction: state.direction,
         inputText: state.inputText,
         shuffled: state.shuffled,
+        autoRepeatRange: state.autoRepeatRange,
         recentConfigs: this.plugin.settings.listenLearnSettings.recentConfigs
       };
       await this.plugin.saveSettings();
@@ -380,6 +381,8 @@ export class ListenLearnPanel {
         if (!isRunning) return;
         if (index < state.numbers.length - 1) {
           playCard(index + 1);
+        } else if (state.autoRepeatRange) {
+          playCard(0);
         } else {
           isRunning = false;
           const pauseBtn = this.container.querySelector('#pause') as HTMLElement;
@@ -477,6 +480,13 @@ export class ListenLearnPanel {
           <div class="lsn-footer-actions-left">
             <button id="ll-back" class="lsn-home-btn-text">${iconWithLabel(APP_ICONS.back, 'Back')}</button>
             <button id="start-over" class="lsn-home-btn-text">${iconWithLabel(APP_ICONS.restart, 'Start Over')}</button>
+            <button
+              id="autorepeat-range"
+              class="lsn-home-btn-text lsn-autorepeat-btn ${state.autoRepeatRange ? 'lsn-autorepeat-btn-active' : ''}"
+              aria-label="Auto-repeat range ${state.autoRepeatRange ? 'on' : 'off'}"
+              aria-pressed="${state.autoRepeatRange}"
+              title="Auto-repeat range ${state.autoRepeatRange ? 'on' : 'off'}"
+            >${iconOnly(APP_ICONS.repeatRange)}</button>
           </div>
           <button id="ll-dashboard" class="lsn-home-btn-text" aria-label="Home">${iconOnly(APP_ICONS.home)}</button>
         </div>
@@ -490,6 +500,21 @@ export class ListenLearnPanel {
     this.container.querySelector('#prev')?.addEventListener('click', handlePrev);
     this.container.querySelector('#next')?.addEventListener('click', handleNext);
     this.container.querySelector('#repeat')?.addEventListener('click', handleRepeat);
+    this.container.querySelector('#autorepeat-range')?.addEventListener('click', async () => {
+      state.autoRepeatRange = !state.autoRepeatRange;
+      const btn = this.container.querySelector('#autorepeat-range') as HTMLButtonElement | null;
+      if (btn) {
+        btn.classList.toggle('lsn-autorepeat-btn-active', state.autoRepeatRange);
+        btn.setAttribute('aria-pressed', String(state.autoRepeatRange));
+        btn.setAttribute('aria-label', `Auto-repeat range ${state.autoRepeatRange ? 'on' : 'off'}`);
+        btn.setAttribute('title', `Auto-repeat range ${state.autoRepeatRange ? 'on' : 'off'}`);
+      }
+      this.plugin.settings.listenLearnSettings = {
+        ...this.plugin.settings.listenLearnSettings,
+        autoRepeatRange: state.autoRepeatRange
+      };
+      await this.plugin.saveSettings();
+    });
     this.container.querySelector('#pause')?.addEventListener('click', () => {
       if (isRunning) pauseSlideshow();
       else handleResume();

@@ -823,6 +823,17 @@ input.lsn-input-lg {
   margin-top: 16px;
 }
 
+.lsn-autorepeat-btn {
+  color: var(--text-muted);
+  opacity: 0.65;
+}
+
+.lsn-autorepeat-btn-active {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  opacity: 1;
+}
+
 .lsn-footer-actions {
   display: flex;
   justify-content: space-between;

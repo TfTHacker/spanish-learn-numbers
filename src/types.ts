@@ -70,6 +70,7 @@ export interface ListenLearnSettings {
   speed: number;
   inputText: string;
   shuffled: boolean;
+  autoRepeatRange: boolean;
   recentConfigs: ListenLearnRecentConfig[];
 }
 
@@ -110,6 +111,7 @@ export interface ListenLearnState {
   direction: 'es-en' | 'en-es' | 'es-only';
   speed: number;
   shuffled: boolean;
+  autoRepeatRange: boolean;
 }
 
 export const DEFAULT_SETTINGS: PluginSettings = {
@@ -121,5 +123,5 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   cramRecentConfigs: [],
   customNumberRanges: '',
   streakData: { currentStreak: 0, lastPracticeDate: '', totalDays: 0 },
-  listenLearnSettings: { direction: 'es-en', speed: 3, inputText: '', shuffled: false, recentConfigs: [] },
+  listenLearnSettings: { direction: 'es-en', speed: 3, inputText: '', shuffled: false, autoRepeatRange: false, recentConfigs: [] },
 };
