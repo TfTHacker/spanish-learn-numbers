@@ -440,6 +440,7 @@
 }
 
 .lsn-listen-subtitle {
+  display: none;
   color: var(--text-muted);
   font-size: 13px;
   line-height: 1.35;
@@ -454,19 +455,41 @@
 .lsn-listen-setup-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 9px;
   margin-bottom: 0;
-  padding: 18px;
+  padding: 12px;
+  border-radius: 14px;
+}
+
+.lsn-listen-range-row {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.7fr) minmax(0, 1.3fr);
+  gap: 10px;
+  align-items: end;
 }
 
 .lsn-listen-field-head .lsn-label,
 .lsn-listen-option-group .lsn-label {
-  margin-bottom: 4px;
+  margin-bottom: 3px;
+}
+
+.lsn-listen-field-head .lsn-example {
+  margin-bottom: 0;
 }
 
 .lsn-listen-ranges {
-  height: 56px;
-  resize: vertical;
+  height: 40px;
+  min-height: 40px;
+  padding: 9px 10px;
+  resize: none;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.lsn-listen-ranges:focus {
+  height: 64px;
+  overflow: auto;
+  white-space: normal;
 }
 
 .lsn-listen-presets {
@@ -477,11 +500,15 @@
 
 .lsn-listen-preset {
   min-width: 0;
-  padding: 9px 8px;
+  padding: 7px 8px;
+  min-height: 34px;
 }
 
 .lsn-listen-history {
   margin: 0;
+  min-height: 36px;
+  padding-top: 7px;
+  padding-bottom: 7px;
 }
 
 .lsn-listen-options-grid {
@@ -500,7 +527,8 @@
 .lsn-listen-direction-btns .lsn-direction-btn,
 .lsn-listen-order-btns .lsn-btn-order {
   min-width: 0;
-  padding: 10px 8px;
+  min-height: 38px;
+  padding: 8px 8px;
   white-space: nowrap;
 }
 
@@ -553,6 +581,11 @@
   gap: 9px;
   padding: 12px;
   border-radius: 14px;
+}
+
+.is-mobile .lsn-listen-range-row {
+  grid-template-columns: 1fr;
+  gap: 5px;
 }
 
 .is-mobile .lsn-listen-field-head .lsn-label,
@@ -655,6 +688,11 @@
     gap: 9px;
     padding: 12px;
     border-radius: 14px;
+  }
+
+  .lsn-listen-range-row {
+    grid-template-columns: 1fr;
+    gap: 5px;
   }
 
   .lsn-listen-field-head .lsn-label,

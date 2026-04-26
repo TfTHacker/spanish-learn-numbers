@@ -81,13 +81,13 @@ export class ListenLearnPanel {
         </div>
 
         <div class="lsn-card-sm lsn-listen-setup-card">
-          <div class="lsn-listen-field-head">
-            <div>
+          <div class="lsn-listen-range-row">
+            <div class="lsn-listen-field-head">
               <div class="lsn-label">Range</div>
               <div class="lsn-example">Numbers or ranges separated by commas.</div>
             </div>
+            <textarea id="ranges" class="lsn-textarea lsn-listen-ranges" rows="1" placeholder="1-10, 20-30, 5, 10, 15">${escapeHtml(state.inputText)}</textarea>
           </div>
-          <textarea id="ranges" class="lsn-textarea lsn-listen-ranges" placeholder="1-10, 20-30, 5, 10, 15">${escapeHtml(state.inputText)}</textarea>
 
           <div class="lsn-listen-presets" aria-label="Focused presets">
             ${FOCUSED_RANGE_PRESETS.map((preset) => `
