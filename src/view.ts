@@ -28,6 +28,10 @@ export class LearnSpanishNumbersView extends View {
     return 'Learn Spanish Numbers';
   }
 
+  async onOpen() {
+    await this.render();
+  }
+
   async onClose() {
     this.container.removeClass('lsn-view');
     if (this.plugin.listenLearnCleanup) {

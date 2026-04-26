@@ -100,13 +100,22 @@ export default class LearnSpanishNumbersPlugin extends Plugin {
   }
 
   // Ensures the view is open, focusing existing or creating new
-  private ensureViewOpen() {
+  private async ensureViewOpen() {
     const existingLeaf = this.app.workspace.getLeavesOfType(VIEW_TYPE)[0];
     if (existingLeaf) {
       this.app.workspace.setActiveLeaf(existingLeaf);
+      const view = existingLeaf.view;
+      if (view instanceof LearnSpanishNumbersView) {
+        await view.render();
+      }
     } else {
       const leaf = this.app.workspace.getLeaf(true);
-      leaf.setViewState({ type: VIEW_TYPE, state: {} });
+      await leaf.setViewState({ type: VIEW_TYPE, state: {}, active: true });
+      this.app.workspace.setActiveLeaf(leaf);
+      const view = leaf.view;
+      if (view instanceof LearnSpanishNumbersView) {
+        await view.render();
+      }
     }
   }
 
