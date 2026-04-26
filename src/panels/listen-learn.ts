@@ -37,6 +37,11 @@ export class ListenLearnPanel {
     const state = this.plugin.listenLearnState;
     if (!state) return;
 
+    if (this.plugin.listenLearnCleanup && this.plugin.listenLearnCleanup !== this.cleanupFn) {
+      this.plugin.listenLearnCleanup();
+      this.plugin.listenLearnCleanup = null;
+    }
+
     if (state.numbers.length === 0) {
       this.renderSetup();
     } else {
@@ -258,6 +263,8 @@ export class ListenLearnPanel {
     const isEsOnly = state.direction === 'es-only';
 
     let timers: number[] = [];
+    let audioWaiters: Array<() => void> = [];
+    let playbackGeneration = 0;
     let isRunning = true;
 
     const getCard = (index: number) => {
@@ -275,42 +282,81 @@ export class ListenLearnPanel {
         firstText = spanish; secondText = ''; firstVoice = this.plugin.settings.voiceId || 'es';
       }
 
-      const playFirstAudio = () => {
-        if (!this.plugin.settings.audioEnabled) return;
-        const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(firstText)}&tl=${firstVoice}&client=gtx`;
-        if (this.plugin.audioEl) {
-          this.plugin.audioEl.pause();
-          this.plugin.audioEl.src = url;
-          this.plugin.audioEl.play().catch(() => {});
-        } else {
-          this.plugin.audioEl = new Audio(url);
-          this.plugin.audioEl.play().catch(() => {});
-        }
+      const playClip = (text: string, voice: string, generation: number): Promise<void> => {
+        if (!this.plugin.settings.audioEnabled || generation !== playbackGeneration) return Promise.resolve();
+
+        return new Promise((resolve) => {
+          const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=${voice}&client=gtx`;
+          const audio = this.plugin.audioEl ?? new Audio();
+          this.plugin.audioEl = audio;
+
+          let settled = false;
+          let timeoutId: number | null = null;
+
+          const cleanup = () => {
+            if (settled) return;
+            settled = true;
+            audio.removeEventListener('ended', finish);
+            audio.removeEventListener('error', finish);
+            audio.removeEventListener('abort', finish);
+            if (timeoutId !== null) window.clearTimeout(timeoutId);
+            audioWaiters = audioWaiters.filter((waiter) => waiter !== cleanup);
+            resolve();
+          };
+
+          const finish = () => cleanup();
+          audioWaiters.push(cleanup);
+          audio.pause();
+          audio.src = url;
+          audio.load();
+          audio.addEventListener('ended', finish, { once: true });
+          audio.addEventListener('error', finish, { once: true });
+          audio.addEventListener('abort', finish, { once: true });
+          timeoutId = window.setTimeout(finish, 12000);
+          audio.play().catch(finish);
+
+          if (generation !== playbackGeneration) {
+            cleanup();
+          }
+        });
       };
 
-      const playSecondAudio = () => {
-        if (!this.plugin.settings.audioEnabled || isEsOnly) return;
-        const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(secondText)}&tl=${secondVoice}&client=gtx`;
-        if (this.plugin.audioEl) {
-          this.plugin.audioEl.pause();
-          this.plugin.audioEl.src = url;
-          this.plugin.audioEl.play().catch(() => {});
-        } else {
-          this.plugin.audioEl = new Audio(url);
-          this.plugin.audioEl.play().catch(() => {});
-        }
-      };
-
-      return { num, spanish, english, firstText, secondText, playFirstAudio, playSecondAudio };
+      return { num, spanish, english, firstText, secondText, firstVoice, secondVoice, playClip };
     };
 
     const clearTimers = () => {
+      playbackGeneration++;
       timers.forEach(t => clearTimeout(t));
       timers = [];
-      if (this.plugin.audioEl) {
-        this.plugin.audioEl.pause();
-        this.plugin.audioEl.src = '';
+      audioWaiters.forEach((finish) => finish());
+      audioWaiters = [];
+      this.plugin.stopAudio();
+    };
+
+    const isCurrentGeneration = (generation: number) => generation === playbackGeneration;
+    const isCurrentPlayback = (generation: number) => isRunning && isCurrentGeneration(generation);
+
+    const waitForGenerationDelay = (ms: number, generation: number) => new Promise<void>((resolve) => {
+      if (!isCurrentGeneration(generation)) {
+        resolve();
+        return;
       }
+
+      timers.push(window.setTimeout(resolve, ms));
+    });
+
+    const waitForDelay = (ms: number, generation: number) => new Promise<void>((resolve) => {
+      if (!isCurrentPlayback(generation)) {
+        resolve();
+        return;
+      }
+
+      timers.push(window.setTimeout(resolve, ms));
+    });
+
+    const waitForAudioAndDelay = async (audioDone: Promise<void>, ms: number, generation: number) => {
+      await Promise.all([audioDone, waitForDelay(ms, generation)]);
+      return isCurrentPlayback(generation);
     };
 
     // Set up cleanup function for plugin to call on unload
@@ -349,37 +395,49 @@ export class ListenLearnPanel {
       if (pctEl) pctEl.textContent = `${pct}%`;
     };
 
-    const revealAnswer = (index: number, playAudio: boolean) => {
+    const revealAnswer = (index: number, playAudio: boolean, generation = playbackGeneration): Promise<void> => {
+      if (!isCurrentGeneration(generation)) return Promise.resolve();
       state.currentIndex = index;
       state.showingAnswer = true;
       updateDisplay(index, true);
       if (playAudio) {
-        getCard(index).playSecondAudio();
+        const card = getCard(index);
+        return card.playClip(card.secondText, card.secondVoice, generation);
       }
+      return Promise.resolve();
     };
 
     const showCardImmediate = (index: number) => {
+      clearTimers();
+      isRunning = false;
       state.currentIndex = index;
       state.showingAnswer = false;
       updateDisplay(index, false);
+      const generation = playbackGeneration;
       const card = getCard(index);
-      card.playFirstAudio();
+      const firstAudioDone = card.playClip(card.firstText, card.firstVoice, generation);
       if (!isEsOnly) {
-        timers.push(window.setTimeout(() => revealAnswer(index, true), MANUAL_REVEAL_DELAY_MS));
+        void (async () => {
+          await Promise.all([firstAudioDone, waitForGenerationDelay(MANUAL_REVEAL_DELAY_MS, generation)]);
+          if (!isCurrentGeneration(generation)) return;
+          void revealAnswer(index, true, generation);
+        })();
       }
     };
 
     const playCard = (index: number) => {
       if (!isRunning) return;
       clearTimers();
+      isRunning = true;
+      const generation = playbackGeneration;
       state.currentIndex = index;
       state.showingAnswer = false;
       updateDisplay(index, false);
       const card = getCard(index);
-      card.playFirstAudio();
+      const firstAudioDone = card.playClip(card.firstText, card.firstVoice, generation);
 
       const nextCard = () => {
-        if (!isRunning) return;
+        if (!isCurrentPlayback(generation)) return;
         if (index < state.numbers.length - 1) {
           playCard(index + 1);
         } else if (state.autoRepeatRange) {
@@ -391,15 +449,20 @@ export class ListenLearnPanel {
         }
       };
 
-      if (isEsOnly) {
-        timers.push(window.setTimeout(nextCard, AUTO_REVEAL_DELAY_MS));
-      } else {
-        timers.push(window.setTimeout(() => {
-          if (!isRunning) return;
-          revealAnswer(index, true);
-          timers.push(window.setTimeout(nextCard, AUTO_ADVANCE_DELAY_MS));
-        }, AUTO_REVEAL_DELAY_MS));
-      }
+      void (async () => {
+        if (isEsOnly) {
+          if (await waitForAudioAndDelay(firstAudioDone, AUTO_REVEAL_DELAY_MS, generation)) {
+            nextCard();
+          }
+          return;
+        }
+
+        if (!(await waitForAudioAndDelay(firstAudioDone, AUTO_REVEAL_DELAY_MS, generation))) return;
+        const secondAudioDone = revealAnswer(index, true, generation);
+        if (await waitForAudioAndDelay(secondAudioDone, AUTO_ADVANCE_DELAY_MS, generation)) {
+          nextCard();
+        }
+      })();
     };
 
     const pauseSlideshow = () => {

@@ -345,7 +345,8 @@ export default class LearnSpanishNumbersPlugin extends Plugin {
     }
 
     this.audioEl.pause();
-    this.audioEl.src = '';
+    this.audioEl.removeAttribute('src');
+    this.audioEl.load();
     this.audioEl = null;
   }
 

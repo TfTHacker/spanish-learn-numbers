@@ -30,16 +30,20 @@ export class LearnSpanishNumbersView extends View {
 
   async onClose() {
     this.container.removeClass('lsn-view');
-    this.plugin.stopAudio();
     if (this.plugin.listenLearnCleanup) {
       this.plugin.listenLearnCleanup();
       this.plugin.listenLearnCleanup = null;
     }
+    this.plugin.stopAudio();
   }
 
   async render() {
     // Note: Don't call loadSettings() here - settings are already loaded by plugin
     // and renderView() in plugin calls this directly
+    if (this.plugin.currentPanel !== 'listen-learn' && this.plugin.listenLearnCleanup) {
+      this.plugin.listenLearnCleanup();
+      this.plugin.listenLearnCleanup = null;
+    }
     
     this.container.empty();
     const wrap = document.createElement('div');
