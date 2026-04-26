@@ -71,52 +71,61 @@ export class ListenLearnPanel {
     const recentConfigs = this.plugin.settings.listenLearnSettings.recentConfigs ?? [];
 
     this.container.innerHTML = `
-      <div class="lsn-wrap">
-        <h2 class="lsn-title-lg lsn-mb-24">Listen & Learn</h2>
-        <div class="lsn-card-sm">
-          <div class="lsn-label">Number Range</div>
-          <div class="lsn-example">Enter numbers or ranges separated by commas.</div>
-          <div class="lsn-label">Focused Presets</div>
-          <div class="lsn-preset-grid lsn-preset-grid-compact lsn-mb-16">
+      <div class="lsn-wrap lsn-listen-setup">
+        <div class="lsn-listen-setup-header">
+          <div>
+            <h2 class="lsn-title-lg lsn-listen-title">Listen & Learn</h2>
+            <div class="lsn-listen-subtitle">Pick a range, choose the prompt style, then start listening.</div>
+          </div>
+          <button id="btn-home" class="lsn-home-btn-text lsn-listen-home" aria-label="Home">${iconOnly(APP_ICONS.home)}</button>
+        </div>
+
+        <div class="lsn-card-sm lsn-listen-setup-card">
+          <div class="lsn-listen-field-head">
+            <div>
+              <div class="lsn-label">Range</div>
+              <div class="lsn-example">Numbers or ranges separated by commas.</div>
+            </div>
+          </div>
+          <textarea id="ranges" class="lsn-textarea lsn-listen-ranges" placeholder="1-10, 20-30, 5, 10, 15">${escapeHtml(state.inputText)}</textarea>
+
+          <div class="lsn-listen-presets" aria-label="Focused presets">
             ${FOCUSED_RANGE_PRESETS.map((preset) => `
-              <button type="button" class="lsn-preset-btn lsn-preset-btn-compact" data-preset="${preset.id}" title="${preset.label}">
+              <button type="button" class="lsn-preset-btn lsn-preset-btn-compact lsn-listen-preset" data-preset="${preset.id}" title="${preset.label}">
                 <span class="lsn-preset-range">${preset.compactLabel ?? preset.ranges}</span>
               </button>
             `).join('')}
           </div>
+
           ${recentConfigs.length > 0 ? `
-            <div class="lsn-label">Recents</div>
-            <select id="history-select" class="lsn-input lsn-mb-16">
-              <option value="">Choose a recent setup...</option>
+            <select id="history-select" class="lsn-input lsn-listen-history" aria-label="Recent Listen & Learn setup">
+              <option value="">Recent setups...</option>
               ${recentConfigs.map((config, index) => `
                 <option value="${index}">${escapeHtml(this.formatHistoryLabel(config.inputText, config.direction, config.shuffled))}</option>
               `).join('')}
             </select>
           ` : ''}
-          <textarea id="ranges" class="lsn-textarea" placeholder="1-10, 20-30, 5, 10, 15">${escapeHtml(state.inputText)}</textarea>
 
-          <div class="lsn-mt-16">
-            <label class="lsn-label">Direction:</label>
-            <div class="lsn-direction-btns">
-              <button id="dir-se" class="lsn-direction-btn">Spanish to English</button>
-              <button id="dir-es" class="lsn-direction-btn">English to Spanish</button>
-              <button id="dir-only" class="lsn-direction-btn">Spanish only</button>
+          <div class="lsn-listen-options-grid">
+            <div class="lsn-listen-option-group">
+              <label class="lsn-label">Direction</label>
+              <div class="lsn-direction-btns lsn-listen-direction-btns">
+                <button id="dir-se" class="lsn-direction-btn" title="Spanish to English">ES → EN</button>
+                <button id="dir-es" class="lsn-direction-btn" title="English to Spanish">EN → ES</button>
+                <button id="dir-only" class="lsn-direction-btn" title="Spanish only">Spanish</button>
+              </div>
+            </div>
+
+            <div class="lsn-listen-option-group">
+              <label class="lsn-label">Order</label>
+              <div class="lsn-listen-order-btns">
+                <button id="order-seq" class="lsn-btn-order lsn-btn-with-icon lsn-btn-order-active">${APP_ICONS.sequential}<span>Seq</span></button>
+                <button id="order-shuf" class="lsn-btn-order lsn-btn-with-icon">${APP_ICONS.shuffle}<span>Shuffle</span></button>
+              </div>
             </div>
           </div>
 
-          <div class="lsn-mt-16">
-            <label class="lsn-label">Order:</label>
-            <div style="display:flex;gap:8px;">
-              <button id="order-seq" class="lsn-btn-order lsn-btn-with-icon lsn-btn-order-active">${APP_ICONS.sequential}<span>Sequential</span></button>
-              <button id="order-shuf" class="lsn-btn-order lsn-btn-with-icon">${APP_ICONS.shuffle}<span>Shuffle</span></button>
-            </div>
-          </div>
-
-          <button id="start" class="lsn-btn-start">Start</button>
-        </div>
-        <div class="lsn-footer-actions">
-          <div class="lsn-footer-actions-left"></div>
-          <button id="btn-home" class="lsn-home-btn-text" aria-label="Home">${iconOnly(APP_ICONS.home)}</button>
+          <button id="start" class="lsn-btn-start lsn-listen-start">Start Listening</button>
         </div>
       </div>
     `;
