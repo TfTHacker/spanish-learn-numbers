@@ -7,6 +7,7 @@ import { APP_ICONS, iconOnly, iconWithLabel } from '../ui/icons';
 import { LearnSpanishNumbersView } from '../view';
 import { getListenLearnDisplayState } from '../utils/learning';
 import { numberToSpanish, numberToWordsEnglish } from '../utils/numbers';
+import { escapeHtml } from '../utils/html';
 
 const AUTO_REVEAL_DELAY_MS = 4000;
 const AUTO_ADVANCE_DELAY_MS = 4000;
@@ -83,11 +84,11 @@ export class ListenLearnPanel {
             <select id="history-select" class="lsn-input lsn-mb-16">
               <option value="">Choose a recent setup...</option>
               ${recentConfigs.map((config, index) => `
-                <option value="${index}">${this.formatHistoryLabel(config.inputText, config.direction, config.shuffled)}</option>
+                <option value="${index}">${escapeHtml(this.formatHistoryLabel(config.inputText, config.direction, config.shuffled))}</option>
               `).join('')}
             </select>
           ` : ''}
-          <textarea id="ranges" class="lsn-textarea" placeholder="1-10, 20-30, 5, 10, 15">${state.inputText}</textarea>
+          <textarea id="ranges" class="lsn-textarea" placeholder="1-10, 20-30, 5, 10, 15">${escapeHtml(state.inputText)}</textarea>
 
           <div class="lsn-mt-16">
             <label class="lsn-label">Direction:</label>
@@ -494,7 +495,7 @@ export class ListenLearnPanel {
     `;
 
     // Show initial card and start the slideshow auto-advance
-    playCard(0);
+    playCard(state.currentIndex);
 
     // Event handlers
     this.container.querySelector('#prev')?.addEventListener('click', handlePrev);

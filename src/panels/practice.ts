@@ -32,10 +32,15 @@ export class PracticePanel {
       this.plugin.render();
     });
 
-    this.startPractice();
+    if (this.plugin.practiceSession) {
+      this.doPractice();
+      return;
+    }
+
+    void this.startPractice();
   }
 
-  private startPractice() {
+  private async startPractice() {
     const ranges = this.plugin.settings.customNumberRanges || DEFAULT_RANGES;
     const validation = this.plugin.validateCustomRanges(ranges);
     
@@ -54,6 +59,7 @@ export class PracticePanel {
     if (due.length === 0) {
       new Notice('No cards due for practice!');
       this.plugin.currentPanel = 'dashboard';
+      this.plugin.practiceSession = null;
       this.plugin.render();
       return;
     }
@@ -61,33 +67,42 @@ export class PracticePanel {
     // Shuffle using plugin's shuffle method
     const shuffledDue = this.plugin.shuffleArray(due);
     this.plugin.markTestedToday();
-    void this.plugin.saveSettings();
+    this.plugin.practiceSession = { cards: shuffledDue, correct: 0, total: 0 };
+    await this.plugin.saveSettings();
     
-    this.doPractice(shuffledDue, 0, 0);
+    this.doPractice();
   }
 
-  private doPractice(cards: CardData[], correct: number, total: number) {
-    if (cards.length === 0) {
-      this.plugin.updateStreak();
-      // Record session history
-      this.plugin.addSessionHistory({
-        cardsReviewed: total,
-        correct,
-        mode: 'srs',
-        groups: []
-      });
-      this.plugin.currentPanel = 'dashboard';
-      this.plugin.saveSettings();
-      new Notice(`Session complete! ${correct}/${total} correct`);
-      this.plugin.render();
+  private async completePracticeSession(session: { cards: CardData[]; correct: number; total: number }) {
+    this.plugin.updateStreak();
+    this.plugin.addSessionHistory({
+      cardsReviewed: session.total,
+      correct: session.correct,
+      mode: 'srs',
+      groups: []
+    });
+    this.plugin.practiceSession = null;
+    this.plugin.currentPanel = 'dashboard';
+    await this.plugin.saveSettings();
+    new Notice(`Session complete! ${session.correct}/${session.total} correct`);
+    this.plugin.render();
+  }
+
+  private doPractice() {
+    const session = this.plugin.practiceSession;
+    if (!session) return;
+
+    if (session.cards.length === 0) {
+      void this.completePracticeSession(session);
       return;
     }
 
+    const cards = session.cards;
     const card = cards[0];
     const spanish = numberToSpanish(card.number);
     const question = card.number.toLocaleString();
     const answer = spanish;
-    const totalCards = total + cards.length;
+    const totalCards = session.total + cards.length;
 
     this.container.innerHTML = `
       <div class="lsn-wrap">
@@ -140,29 +155,50 @@ export class PracticePanel {
     // Again - put at back of queue with short interval
     this.container.querySelector('#btn-again')?.addEventListener('click', () => {
       Object.assign(card, applyPracticeAction(card, 'again', Date.now()));
-      this.doPractice([...cards.slice(1), card], correct, total + 1);
+      this.plugin.practiceSession = {
+        cards: [...cards.slice(1), card],
+        correct: session.correct,
+        total: session.total + 1
+      };
+      this.doPractice();
     });
 
     // Hard - decrease ease, shorter interval
     this.container.querySelector('#btn-hard')?.addEventListener('click', () => {
       Object.assign(card, applyPracticeAction(card, 'hard', Date.now()));
-      this.doPractice(cards.slice(1), correct + 1, total + 1);
+      this.plugin.practiceSession = {
+        cards: cards.slice(1),
+        correct: session.correct + 1,
+        total: session.total + 1
+      };
+      this.doPractice();
     });
 
     // Good - standard SM-2 progression
     this.container.querySelector('#btn-good')?.addEventListener('click', () => {
       Object.assign(card, applyPracticeAction(card, 'good', Date.now()));
-      this.doPractice(cards.slice(1), correct + 1, total + 1);
+      this.plugin.practiceSession = {
+        cards: cards.slice(1),
+        correct: session.correct + 1,
+        total: session.total + 1
+      };
+      this.doPractice();
     });
 
     // Skip - move to end without recording
     this.container.querySelector('#btn-skip')?.addEventListener('click', () => {
-      this.doPractice([...cards.slice(1), card], correct, total);
+      this.plugin.practiceSession = {
+        cards: [...cards.slice(1), card],
+        correct: session.correct,
+        total: session.total
+      };
+      this.doPractice();
     });
 
     // Home - save and go back
     this.container.querySelector('#btn-home')?.addEventListener('click', async () => {
       await this.plugin.saveSettings();
+      this.plugin.practiceSession = null;
       this.plugin.currentPanel = 'dashboard';
       this.plugin.render();
     });

@@ -1,8 +1,9 @@
 // LearnSpanishNumbersPlugin - Main plugin class
 
-import { Notice, Plugin, normalizePath } from 'obsidian';
+import { Editor, FuzzySuggestModal, MarkdownView, Notice, Plugin, normalizePath } from 'obsidian';
 import { DEFAULT_SETTINGS, DEFAULT_RANGES, PluginSettings, CardData, SessionHistory, ListenLearnState, PanelId, ListenLearnRecentConfig, CramRecentConfig } from './types';
-import { trimSessionHistory } from './utils/learning';
+import { CramSessionState, trimSessionHistory } from './utils/learning';
+import { validateCustomRanges as validateCustomRangesInput } from './utils/ranges';
 import { playAudio } from './utils/audio';
 import { LearnSpanishNumbersSettingTab } from './settings';
 import { LearnSpanishNumbersView } from './view';
@@ -12,9 +13,6 @@ export const MS_PER_MINUTE = 60 * 1000;
 export const MS_PER_DAY = 24 * 60 * 60 * 1000;
 export const DEFAULT_RETRY_INTERVAL_MS = 60 * 1000; // 1 minute for "Again" button
 export const VIEW_TYPE = 'spanish-learn-numbers';
-const MAX_NUMBER = 1_000_000_000_000;
-const MAX_EXPANDED_RANGE_SIZE = 5000;
-const MAX_TOTAL_CUSTOM_NUMBERS = 10000;
 
 export default class LearnSpanishNumbersPlugin extends Plugin {
   settings!: PluginSettings;
@@ -22,6 +20,10 @@ export default class LearnSpanishNumbersPlugin extends Plugin {
   history: SessionHistory[] = [];
   audioEl: HTMLAudioElement | null = null;
   currentPanel: PanelId = 'dashboard';
+  practiceSession: { cards: CardData[]; correct: number; total: number } | null = null;
+  cramSession: CramSessionState | null = null;
+  cramSetupIsShuffled: boolean = false;
+  cramCompletionRecorded: boolean = false;
   listenLearnState!: ListenLearnState;
   listenLearnCleanup: (() => void) | null = null;
   private reminderTimer: number | null = null;
@@ -61,15 +63,28 @@ export default class LearnSpanishNumbersPlugin extends Plugin {
     });
 
     // Add ribbon icon
-    this.addRibbonIcon('languages', 'Learn Spanish Numbers', () => {
+    this.addRibbonIcon('hash', 'Learn Spanish Numbers', () => {
       this.currentPanel = 'dashboard';
       this.ensureViewOpen();
     });
 
+    // Register obsidian:// protocol handler for linking to number view from markdown
+    this.registerObsidianProtocolHandler('spanish-numbers', (params) => {
+      this.handleProtocolHandler(params);
+    });
+
+    // Command: Insert hyperlink to number view
+    this.addCommand({
+      id: 'insert-number-view-link',
+      name: 'Insert link to number view',
+      editorCallback: (editor: Editor, view: MarkdownView) => {
+        this.insertNumberViewLink(editor, view);
+      }
+    });
+
     this.refreshReminderTimer();
 
-    // Don't auto-open view - user clicks ribbon icon to open
-    this.registerEvent(this.app.workspace.on('layout-change', () => this.render()));
+    // Don't auto-open view - user clicks ribbon icon or command to open
   }
 
   onunload() {
@@ -173,6 +188,10 @@ export default class LearnSpanishNumbersPlugin extends Plugin {
     this.cards = [];
     this.history = [];
     this.currentPanel = 'dashboard';
+    this.practiceSession = null;
+    this.cramSession = null;
+    this.cramSetupIsShuffled = false;
+    this.cramCompletionRecorded = false;
     this.listenLearnState = {
       numbers: [],
       currentIndex: 0,
@@ -199,61 +218,7 @@ export default class LearnSpanishNumbersPlugin extends Plugin {
   }
 
   validateCustomRanges(input: string): { valid: boolean; error?: string; numbers?: number[] } {
-    const parts = input
-      .split(',')
-      .map(part => part.trim())
-      .filter(Boolean);
-    const uniqueNumbers = new Set<number>();
-
-    if (parts.length === 0) {
-      return { valid: false, error: 'No valid numbers found' };
-    }
-
-    for (const rawPart of parts) {
-      const part = rawPart.replace(/^\[|\]$/g, '').trim();
-
-      if (/^\d+$/.test(part)) {
-        const n = Number(part);
-        if (!Number.isSafeInteger(n) || n < 0 || n > MAX_NUMBER) {
-          return { valid: false, error: `Invalid number: ${rawPart}` };
-        }
-        uniqueNumbers.add(n);
-        continue;
-      }
-
-      if (/^\d+\s*-\s*\d+$/.test(part)) {
-        const [startText, endText] = part.split('-').map(value => value.trim());
-        const start = Number(startText);
-        const end = Number(endText);
-
-        if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < 0 || start > end || end > MAX_NUMBER) {
-          return { valid: false, error: `Invalid range: ${rawPart}` };
-        }
-
-        const rangeSize = end - start + 1;
-        if (rangeSize > MAX_EXPANDED_RANGE_SIZE) {
-          return {
-            valid: false,
-            error: `Range too large: ${rawPart}. Keep each range at ${MAX_EXPANDED_RANGE_SIZE.toLocaleString()} numbers or fewer.`
-          };
-        }
-
-        for (let value = start; value <= end; value++) {
-          uniqueNumbers.add(value);
-          if (uniqueNumbers.size > MAX_TOTAL_CUSTOM_NUMBERS) {
-            return {
-              valid: false,
-              error: `Too many numbers selected. Keep the total at ${MAX_TOTAL_CUSTOM_NUMBERS.toLocaleString()} numbers or fewer.`
-            };
-          }
-        }
-        continue;
-      }
-
-      return { valid: false, error: `Invalid entry: ${rawPart}` };
-    }
-
-    return { valid: true, numbers: [...uniqueNumbers] };
+    return validateCustomRangesInput(input);
   }
 
   shuffleArray<T>(arr: T[]): T[] {
@@ -463,11 +428,76 @@ export default class LearnSpanishNumbersPlugin extends Plugin {
     return Boolean(notice?.noticeEl?.isConnected);
   }
 
+  /** Handle obsidian://spanish-numbers?panel=<panelId> protocol links */
+  private handleProtocolHandler(params: Record<string, string>) {
+    const panel = (params.panel ?? 'dashboard') as PanelId;
+    const validPanels: PanelId[] = ['dashboard', 'practice', 'number-to-spanish', 'listen-learn', 'cram'];
+
+    if (!validPanels.includes(panel)) {
+      new Notice(`Unknown panel: ${panel}`);
+      return;
+    }
+
+    this.currentPanel = panel;
+    this.ensureViewOpen();
+  }
+
+  /** Insert a markdown hyperlink to the number view at the cursor position */
+  private insertNumberViewLink(editor: Editor, view: MarkdownView) {
+    const PANEL_OPTIONS: { id: PanelId; label: string }[] = [
+      { id: 'dashboard', label: 'Dashboard' },
+      { id: 'practice', label: 'SRS Practice' },
+      { id: 'number-to-spanish', label: 'Number to Spanish' },
+      { id: 'listen-learn', label: 'Listen & Learn' },
+      { id: 'cram', label: 'Cram' },
+    ];
+
+    // Build a small modal-like suggestion using the suggester API
+    const onChoose = (panel: { id: PanelId; label: string }) => {
+      const link = `[${panel.label}](obsidian://spanish-numbers?panel=${panel.id})`;
+      const cursor = editor.getCursor();
+      editor.replaceRange(link, cursor);
+      editor.setCursor({ line: cursor.line, ch: cursor.ch + link.length });
+    };
+
+    // Use Obsidian's built-in FuzzySuggestModal
+    const modal = new PanelSuggestModal(this.app, PANEL_OPTIONS, onChoose);
+    modal.open();
+  }
+
   render() {
     this.syncReminderNoticeState();
     const view = this.app.workspace.getActiveViewOfType(LearnSpanishNumbersView);
     if (view) {
       view.render();
     }
+  }
+}
+
+class PanelSuggestModal extends FuzzySuggestModal<{ id: PanelId; label: string }> {
+  private options: { id: PanelId; label: string }[];
+  private onChoose: (item: { id: PanelId; label: string }) => void;
+
+  constructor(
+    app: import('obsidian').App,
+    options: { id: PanelId; label: string }[],
+    onChoose: (item: { id: PanelId; label: string }) => void
+  ) {
+    super(app);
+    this.options = options;
+    this.onChoose = onChoose;
+    this.setPlaceholder('Choose a panel to link to…');
+  }
+
+  getItems() {
+    return this.options;
+  }
+
+  getItemText(item: { label: string }) {
+    return item.label;
+  }
+
+  onChooseItem(item: { id: PanelId; label: string }) {
+    this.onChoose(item);
   }
 }

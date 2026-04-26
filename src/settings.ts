@@ -14,7 +14,13 @@ export class LearnSpanishNumbersSettingTab extends PluginSettingTab {
     this.plugin = plugin;
   }
 
+  hide(): void {
+    this.clearDebounceTimer();
+    super.hide();
+  }
+
   display(): void {
+    this.clearDebounceTimer();
     const { containerEl } = this;
     containerEl.empty();
     containerEl.createEl('h2', { text: 'Learn Spanish Numbers Settings' });
@@ -164,5 +170,14 @@ export class LearnSpanishNumbersSettingTab extends PluginSettingTab {
           }
         });
       });
+  }
+
+  private clearDebounceTimer() {
+    if (this.debounceTimer === null) {
+      return;
+    }
+
+    window.clearTimeout(this.debounceTimer);
+    this.debounceTimer = null;
   }
 }

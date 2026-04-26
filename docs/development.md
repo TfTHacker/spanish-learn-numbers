@@ -5,7 +5,12 @@ This file keeps development details out of the main README so the user-facing do
 ## Commands
 
 - `npm run check` - run the Spanish number validator, learning-flow regression validator, and TypeScript checks
+- `npm test` - alias for `npm run check`
 - `npm run build` - run validation and build the plugin
+
+## Agent-oriented maintenance
+
+Start with the root `AGENTS.md` file for repository-specific guardrails, ownership boundaries, and known refactor targets. Use `docs/architecture.md` for the current runtime map before changing cross-cutting behavior.
 
 ## Local vault deploy
 

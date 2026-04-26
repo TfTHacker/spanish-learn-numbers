@@ -45,6 +45,7 @@ function loadModule(relativePath) {
 }
 
 const learning = loadModule('../src/utils/learning.ts');
+const ranges = loadModule('../src/utils/ranges.ts');
 const { TRICKY_NUMBERS } = loadModule('../src/types.ts');
 
 const {
@@ -64,6 +65,7 @@ const {
   restartCramSession,
   trimSessionHistory,
 } = learning;
+const { validateCustomRanges } = ranges;
 
 function expectEqual(actual, expected, message) {
   assert.deepEqual(actual, expected, message);
@@ -204,6 +206,19 @@ function testListenLearnDisplayPhases() {
   assert.equal(esOnly.answerMarkup, '');
 }
 
+function testRangeValidation() {
+  assert.deepEqual(validateCustomRanges('1-3, 3, [5], 7'), {
+    valid: true,
+    numbers: [1, 2, 3, 5, 7],
+  });
+
+  assert.deepEqual(validateCustomRanges('[1-3], [5, 7]').numbers, [1, 2, 3, 5, 7]);
+  assert.equal(validateCustomRanges('').valid, false);
+  assert.equal(validateCustomRanges('10-1').valid, false);
+  assert.equal(validateCustomRanges('0-5000').valid, false, 'Expanded ranges over 5,000 values should be rejected');
+  assert.equal(validateCustomRanges('1000000000001').valid, false, 'Numbers over one trillion should be rejected');
+}
+
 testPracticeCardCreation();
 testPracticeNoDuplicateCards();
 testPracticeDueFiltering();
@@ -217,5 +232,6 @@ testCramGood();
 testCramRestartPreservesOrderMode();
 testHistoryTrimming();
 testListenLearnDisplayPhases();
+testRangeValidation();
 
 console.log('Learning flow regression validation passed.');

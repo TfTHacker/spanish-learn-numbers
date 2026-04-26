@@ -5,23 +5,24 @@ import LearnSpanishNumbersPlugin from '../plugin';
 import { FOCUSED_RANGE_PRESETS } from '../types';
 import { APP_ICONS, iconOnly, iconWithLabel } from '../ui/icons';
 import { LearnSpanishNumbersView } from '../view';
-import { applyCramAgain, applyCramGood, buildCramSession, CramCard, CramSessionState, restartCramSession } from '../utils/learning';
+import { applyCramAgain, applyCramGood, buildCramSession, CramSessionState, restartCramSession } from '../utils/learning';
 import { numberToSpanish } from '../utils/numbers';
+import { escapeHtml } from '../utils/html';
+
+const EMPTY_CRAM_SESSION: CramSessionState = {
+  allNumbers: [],
+  unknownCards: [],
+  totalCards: 0,
+  knownCount: 0,
+  sessionCorrect: 0,
+  sessionReviewed: 0,
+  isShuffled: false
+};
 
 export class CramPanel {
   private plugin: LearnSpanishNumbersPlugin;
   private container: HTMLElement;
   private view: LearnSpanishNumbersView;
-  private setupIsShuffled: boolean = false;
-  private session: CramSessionState = {
-    allNumbers: [],
-    unknownCards: [],
-    totalCards: 0,
-    knownCount: 0,
-    sessionCorrect: 0,
-    sessionReviewed: 0,
-    isShuffled: false
-  };
 
   constructor(plugin: LearnSpanishNumbersPlugin, container: HTMLElement, view: LearnSpanishNumbersView) {
     this.plugin = plugin;
@@ -30,7 +31,20 @@ export class CramPanel {
   }
 
   render() {
+    if (this.session.totalCards > 0) {
+      this.showCard();
+      return;
+    }
+
     this.showSetup();
+  }
+
+  private get session(): CramSessionState {
+    return this.plugin.cramSession ?? EMPTY_CRAM_SESSION;
+  }
+
+  private set session(session: CramSessionState) {
+    this.plugin.cramSession = session;
   }
 
   private formatRecentLabel(inputText: string, shuffled: boolean) {
@@ -42,7 +56,7 @@ export class CramPanel {
   private showSetup() {
     const lastRanges = this.plugin.settings.lastCramRanges || this.plugin.settings.customNumberRanges || '1-20';
     const recentConfigs = this.plugin.settings.cramRecentConfigs ?? [];
-    let isShuffled = this.setupIsShuffled;
+    let isShuffled = this.plugin.cramSetupIsShuffled;
 
     this.container.innerHTML = `
       <div class="lsn-wrap">
@@ -64,11 +78,11 @@ export class CramPanel {
             <select id="cram-history-select" class="lsn-input lsn-mb-16">
               <option value="">Choose a recent setup...</option>
               ${recentConfigs.map((config, index) => `
-                <option value="${index}">${this.formatRecentLabel(config.inputText, config.shuffled)}</option>
+                <option value="${index}">${escapeHtml(this.formatRecentLabel(config.inputText, config.shuffled))}</option>
               `).join('')}
             </select>
           ` : ''}
-          <textarea id="cram-ranges" class="lsn-textarea" placeholder="1-10, 20-30, 5, 10, 15">${lastRanges}</textarea>
+          <textarea id="cram-ranges" class="lsn-textarea" placeholder="1-10, 20-30, 5, 10, 15">${escapeHtml(lastRanges)}</textarea>
 
           <div class="lsn-mt-16">
             <label class="lsn-label">Order:</label>
@@ -122,7 +136,7 @@ export class CramPanel {
       const selectedConfig = recentConfigs[selectedIndex];
       rangesEl.value = selectedConfig.inputText;
       isShuffled = selectedConfig.shuffled;
-      this.setupIsShuffled = selectedConfig.shuffled;
+      this.plugin.cramSetupIsShuffled = selectedConfig.shuffled;
       this.plugin.settings.lastCramRanges = selectedConfig.inputText;
       updateOrderButtons();
       await this.plugin.saveSettings();
@@ -130,13 +144,13 @@ export class CramPanel {
 
     this.container.querySelector('#order-seq')?.addEventListener('click', () => {
       isShuffled = false;
-      this.setupIsShuffled = false;
+      this.plugin.cramSetupIsShuffled = false;
       updateOrderButtons();
     });
 
     this.container.querySelector('#order-shuf')?.addEventListener('click', () => {
       isShuffled = true;
-      this.setupIsShuffled = true;
+      this.plugin.cramSetupIsShuffled = true;
       updateOrderButtons();
     });
 
@@ -160,7 +174,8 @@ export class CramPanel {
       this.plugin.rememberCramConfig(input, isShuffled);
       this.plugin.markTestedToday();
       await this.plugin.saveSettings();
-      this.setupIsShuffled = isShuffled;
+      this.plugin.cramSetupIsShuffled = isShuffled;
+      this.plugin.cramCompletionRecorded = false;
 
       this.session = buildCramSession(
         validation.numbers,
@@ -174,7 +189,7 @@ export class CramPanel {
 
   private showCard() {
     if (this.session.unknownCards.length === 0) {
-      this.showComplete();
+      void this.showComplete();
       return;
     }
 
@@ -258,6 +273,7 @@ export class CramPanel {
     });
 
     this.container.querySelector('#btn-startover')?.addEventListener('click', () => {
+      this.plugin.cramCompletionRecorded = false;
       this.session = restartCramSession(
         this.session,
         this.plugin.shuffleArray.bind(this.plugin)
@@ -266,7 +282,8 @@ export class CramPanel {
     });
 
     this.container.querySelector('#btn-back')?.addEventListener('click', () => {
-      this.setupIsShuffled = this.session.isShuffled;
+      this.plugin.cramSetupIsShuffled = this.session.isShuffled;
+      this.plugin.cramSession = null;
       this.showSetup();
     });
 
@@ -281,12 +298,17 @@ export class CramPanel {
         });
         await this.plugin.saveSettings();
       }
+      this.plugin.cramSession = null;
       this.plugin.currentPanel = 'dashboard';
       this.plugin.render();
     });
   }
 
-  private showComplete() {
+  private async recordCompletedSession() {
+    if (this.plugin.cramCompletionRecorded) {
+      return;
+    }
+
     // Record session history
     this.plugin.addSessionHistory({
       cardsReviewed: this.session.sessionReviewed,
@@ -294,7 +316,12 @@ export class CramPanel {
       mode: 'cram',
       groups: [this.plugin.settings.lastCramRanges || '']
     });
-    this.plugin.saveSettings();
+    this.plugin.cramCompletionRecorded = true;
+    await this.plugin.saveSettings();
+  }
+
+  private async showComplete() {
+    await this.recordCompletedSession();
 
     this.container.innerHTML = `
       <div class="lsn-wrap lsn-text-center">
@@ -311,11 +338,13 @@ export class CramPanel {
     `;
 
     this.container.querySelector('#btn-back')?.addEventListener('click', () => {
-      this.setupIsShuffled = this.session.isShuffled;
+      this.plugin.cramSetupIsShuffled = this.session.isShuffled;
+      this.plugin.cramSession = null;
       this.showSetup();
     });
 
     this.container.querySelector('#btn-startover')?.addEventListener('click', () => {
+      this.plugin.cramCompletionRecorded = false;
       this.session = restartCramSession(
         this.session,
         this.plugin.shuffleArray.bind(this.plugin)
@@ -324,6 +353,7 @@ export class CramPanel {
     });
 
     this.container.querySelector('#btn-home')?.addEventListener('click', () => {
+      this.plugin.cramSession = null;
       this.plugin.currentPanel = 'dashboard';
       this.plugin.render();
     });
