@@ -23,6 +23,10 @@ export class PracticePanel {
     this.container.innerHTML = `
       <div class="lsn-wrap">
         <button id="btn-home" class="lsn-home-btn" aria-label="Home">${iconOnly(APP_ICONS.home)}</button>
+        <div class="lsn-text-center lsn-mt-24">
+          <h2 class="lsn-title-lg">SRS Practice</h2>
+          <p class="lsn-text-muted">Loading practice cards…</p>
+        </div>
       </div>
     `;
 
@@ -40,12 +44,34 @@ export class PracticePanel {
     void this.startPractice();
   }
 
+  private showPracticeUnavailable(title: string, message: string) {
+    this.container.innerHTML = `
+      <div class="lsn-wrap">
+        <div class="lsn-text-center lsn-mb-24">
+          <h2 class="lsn-title-lg">${title}</h2>
+          <p class="lsn-text-muted">${message}</p>
+        </div>
+        <div class="lsn-footer-actions">
+          <div class="lsn-footer-actions-left"></div>
+          <button id="btn-home" class="lsn-home-btn-text" aria-label="Home">${iconOnly(APP_ICONS.home)}</button>
+        </div>
+      </div>
+    `;
+
+    this.container.querySelector('#btn-home')?.addEventListener('click', () => {
+      this.plugin.practiceSession = null;
+      this.plugin.currentPanel = 'dashboard';
+      this.plugin.render();
+    });
+  }
+
   private async startPractice() {
     const ranges = this.plugin.settings.customNumberRanges || DEFAULT_RANGES;
     const validation = this.plugin.validateCustomRanges(ranges);
     
     if (!validation.valid || !validation.numbers?.length) {
       new Notice(`Invalid ranges: ${validation.error || 'Check settings'}`);
+      this.showPracticeUnavailable('No practice cards', validation.error || 'Check your practice range settings.');
       return;
     }
 
@@ -58,9 +84,8 @@ export class PracticePanel {
     
     if (due.length === 0) {
       new Notice('No cards due for practice!');
-      this.plugin.currentPanel = 'dashboard';
       this.plugin.practiceSession = null;
-      this.plugin.render();
+      this.showPracticeUnavailable('No cards due', 'All cards in your selected range are caught up for now.');
       return;
     }
     

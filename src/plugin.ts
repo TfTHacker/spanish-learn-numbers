@@ -468,9 +468,10 @@ export default class LearnSpanishNumbersPlugin extends Plugin {
 
   render() {
     this.syncReminderNoticeState();
-    const view = this.app.workspace.getActiveViewOfType(LearnSpanishNumbersView);
-    if (view) {
-      view.render();
+    const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPE)[0];
+    const view = leaf?.view;
+    if (view instanceof LearnSpanishNumbersView) {
+      void view.render();
     }
   }
 }
