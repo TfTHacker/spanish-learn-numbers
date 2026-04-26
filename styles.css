@@ -462,10 +462,9 @@
 }
 
 .lsn-listen-range-row {
-  display: grid;
-  grid-template-columns: minmax(110px, 0.7fr) minmax(0, 1.3fr);
-  gap: 10px;
-  align-items: end;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .lsn-listen-field-head .lsn-label,
@@ -478,18 +477,20 @@
 }
 
 .lsn-listen-ranges {
-  height: 40px;
-  min-height: 40px;
+  height: 58px;
+  min-height: 58px;
   padding: 9px 10px;
-  resize: none;
-  overflow: hidden;
-  white-space: nowrap;
+  resize: vertical;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .lsn-listen-ranges:focus {
-  height: 64px;
+  height: 82px;
   overflow: auto;
-  white-space: normal;
+  white-space: pre-wrap;
 }
 
 .lsn-listen-presets {
@@ -599,14 +600,18 @@
 }
 
 .is-mobile .lsn-listen-ranges {
-  height: 44px;
-  min-height: 44px;
-  padding: 10px;
+  height: 58px;
+  min-height: 58px;
+  padding: 9px 10px;
   resize: none;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .is-mobile .lsn-listen-ranges:focus {
-  height: 68px;
+  height: 82px;
 }
 
 .is-mobile .lsn-listen-presets {
@@ -706,14 +711,18 @@
   }
 
   .lsn-listen-ranges {
-    height: 44px;
-    min-height: 44px;
-    padding: 10px;
+    height: 58px;
+    min-height: 58px;
+    padding: 9px 10px;
     resize: none;
+    overflow: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   .lsn-listen-ranges:focus {
-    height: 68px;
+    height: 82px;
   }
 
   .lsn-listen-presets {

@@ -86,7 +86,7 @@ export class ListenLearnPanel {
               <div class="lsn-label">Range</div>
               <div class="lsn-example">Numbers or ranges separated by commas.</div>
             </div>
-            <textarea id="ranges" class="lsn-textarea lsn-listen-ranges" rows="1" placeholder="1-10, 20-30, 5, 10, 15">${escapeHtml(state.inputText)}</textarea>
+            <textarea id="ranges" class="lsn-textarea lsn-listen-ranges" rows="2" wrap="soft" placeholder="1-10, 20-30, 5, 10, 15">${escapeHtml(state.inputText)}</textarea>
           </div>
 
           <div class="lsn-listen-presets" aria-label="Focused presets">
